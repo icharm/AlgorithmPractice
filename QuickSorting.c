@@ -1,10 +1,13 @@
 /****************************************************************************
 快速排序
-时间复杂度O(NlogN)
+平均时间复杂度O(NlogN), 最差时间复杂度O(N^2)
 二分思想
 ****************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
+//Global Variable
+int arr[100], num;
+
 void swap(int *x, int *y)
 {
 	int tmp;
@@ -13,47 +16,49 @@ void swap(int *x, int *y)
     *y = tmp;
 }
 
-void quickSort(int *arr, int i, int j)
+void quickSort(int i, int j)
 {
-	if(i == j)
+	if(i > j)
 		return;
-	int base = i;
-    int end = j;
+    int base = arr[i];
+	int left = i;
+    int right = j;
+    int tmp;
     while(i != j){
-		for(i; i<j; i++){
-			if(arr[i] > arr[base])
-				break;
-		}
-		for(j; j>=i; j--){
-			if(arr[j] < arr[base])
-				break;
-		}
-        swap(&arr[i], &arr[j]);
+		//先从右往左<--寻找 
+		while(arr[j] >= base && i<j)// >= 为从小到大排序
+			j--;
+        //-->
+		while(arr[i] <= base && i<j)
+        	i++;
+		if(i<j)
+			swap(&arr[i], &arr[j]); 
     }
-    swap(&arr[base], &arr[i]);
-    quickSort(&arr, 0, i-1);
-    quickSort(&arr, i+1, end);
+    
+    //交换基准数
+    swap(&arr[left], &arr[i]);
+    
+    quickSort(left, i-1);	//先为左边的排序
+    quickSort(i+1, right);	//在为右边的排序
 }
 
 int main()
 {
-	int num, *arr, i;
+    int i;
     scanf("%d", &num);
-    arr = (int *)malloc(sizeof(int)*num);
     
     for(i=0; i<num; i++){
-		scanf("%d", &arr[i]);
+		scanf("%d", &arr[i]);   
     }
-    
+        
     //sorting
-	quickSort(&arr, 0, num-1);
+	quickSort(0, num-1);
     
     //print result after sorted
     for(i=0; i<num; i++){
 		printf("%d ", arr[i]);
     }
     
-    free(arr);
     printf("\r\n");
 	system("pause");
 	return 0;
